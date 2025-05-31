@@ -60,7 +60,6 @@ func RunParse(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(inputFiles)
 	for _, f := range inputFiles {
 
 		exstention := filepath.Ext(f)
