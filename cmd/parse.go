@@ -37,7 +37,7 @@ func init() {
 	rootCmd.AddCommand(parseCmd)
 	parseCmd.Flags().StringSliceP(filesFlag, "f", []string{}, "passing markdown files that you want to parse")
 
-	parseCmd.Flags().String(tagFlag, "", "search for tag in a file ie. [[Hello]]")
+	parseCmd.Flags().StringSliceP(tagFlag, "", []string{}, "search for tag in a file ie. [[Hello]]")
 
 	parseCmd.MarkFlagRequired(filesFlag)
 
@@ -78,11 +78,10 @@ func RunParse(cmd *cobra.Command, args []string) error {
 		files = append(files, f)
 	}
 
-	tag, err := cmd.Flags().GetString(tagFlag)
+	tag, err := cmd.Flags().GetStringSlice(tagFlag)
 	if err != nil {
 		return err
 	}
-	fmt.Println(files)
 
 	reference, err := internal.Parse(files, tag)
 	if err != nil {

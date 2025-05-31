@@ -92,7 +92,7 @@ func SearchTag(content []byte, tag string) []ast.Node {
 
 }
 
-func Parse(files []string, tag string) (reference string, err error) {
+func Parse(files []string, tags []string) (reference string, err error) {
 	var a string
 	for _, f := range files {
 		content, err := os.ReadFile(f)
@@ -101,10 +101,12 @@ func Parse(files []string, tag string) (reference string, err error) {
 		}
 
 		reference += PageLink(f)
-		nodes := SearchTag(content, tag)
-		for _, n := range nodes {
+		for _, tag := range tags {
+			nodes := SearchTag(content, tag)
+			for _, n := range nodes {
+				reference += GatherContent(n, 0, content, tag, a)
 
-			reference += GatherContent(n, 0, content, tag, a)
+			}
 
 		}
 
