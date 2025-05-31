@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -42,13 +41,7 @@ func MarkdownTicks(level int) string {
 
 }
 func PageLink(file string) string {
-	path, err := os.Getwd()
-	if err != nil {
-		return ""
-	}
-
-	absPath := filepath.Join(path, file)
-	header := fmt.Sprintf("### [%s](%s)\n", file, absPath)
+	header := fmt.Sprintf("### [%s](%s)\n", file, file)
 
 	return header
 }
