@@ -12,8 +12,6 @@ import (
 )
 
 // TODO: Need to store each
-// TODO:
-// TODO:
 
 func getNodeText(node ast.Node, source []byte) string {
 	var buf bytes.Buffer
@@ -107,3 +105,7 @@ func Parse(files []string, tags []string) (reference string, err error) {
 
 	return reference, nil
 }
+
+//TODO: Render should be seperate from parsing
+
+// func Render(a complex object)(return string and error)
