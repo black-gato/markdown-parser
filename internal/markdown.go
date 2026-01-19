@@ -71,7 +71,7 @@ func SearchTag(content []byte, tag string) []ast.Node {
 	doc := md.Parser().Parse(reader)
 	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if n.Kind() == ast.KindListItem && entering {
-			if strings.Contains(getNodeText(n, content), tag) {
+			if strings.Contains(getNodeText(n, bytes.ToLower(content)), strings.ToLower(tag)) {
 				liNodes = append(liNodes, n)
 				return ast.WalkSkipChildren, nil
 			}
@@ -88,7 +88,7 @@ func Parse(files []string, tags []string) (reference string, err error) {
 	for _, f := range files {
 		content, err := os.ReadFile(f)
 		if err != nil {
-			return "", nil
+			return "", err
 		}
 
 		reference += PageLink(f)
