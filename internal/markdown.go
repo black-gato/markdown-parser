@@ -51,7 +51,8 @@ func PageLink(file string) string {
 
 	return header
 }
-func GatherContent(n ast.Node, level int, source []byte, tag, content string) string {
+
+func GatherContent(n ast.Node, level int, source []byte, content string) string {
 
 	if n.Kind() == ast.KindListItem {
 		t := MarkdownTicks(level)
@@ -61,10 +62,10 @@ func GatherContent(n ast.Node, level int, source []byte, tag, content string) st
 	for child := n.FirstChild(); child != nil; child = child.NextSibling() {
 
 		if child.Kind() == ast.KindList {
-			content = GatherContent(child, level+1, source, tag, content)
+			content = GatherContent(child, level+1, source, content)
 
 		} else {
-			content = GatherContent(child, level, source, tag, content)
+			content = GatherContent(child, level, source, content)
 
 		}
 
@@ -103,7 +104,7 @@ func Parse(files []string, tags []string) (reference string, err error) {
 		for _, tag := range tags {
 			nodes := SearchTag(content, tag)
 			for _, n := range nodes {
-				reference += GatherContent(n, 0, content, tag, a)
+				reference += GatherContent(n, 0, content, a)
 
 			}
 
