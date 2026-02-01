@@ -2,7 +2,9 @@ package internal
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -12,6 +14,12 @@ import (
 )
 
 // TODO: Need to store each
+
+type JiraBody struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	AC          string `json:"ac"`
+}
 
 func getNodeText(node ast.Node, source []byte) string {
 	var buf bytes.Buffer
@@ -106,6 +114,43 @@ func Parse(files []string, tags []string) (reference string, err error) {
 	return reference, nil
 }
 
+func ParseJira(content []byte) (err error) {
+
+	var jira JiraBody
+	md := goldmark.New()
+	reader := text.NewReader(content)
+	doc := md.Parser().Parse(reader)
+	level := 0
+	ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		if entering && n.Kind() == ast.KindListItem {
+
+			if level == 0 {
+				jira.Title = getNodeText(n, content)
+				level++
+				return ast.WalkContinue, nil
+			}
+
+			if level == 1 && strings.Contains(getNodeText(n, content), "Acceptance Criteria:") {
+				jira.AC = GatherContent(n, level, content, "")
+				return ast.WalkSkipChildren, nil
+			} else {
+				jira.Description = GatherContent(n, level, content, "")
+				return ast.WalkSkipChildren, nil
+			}
+		}
+
+		return ast.WalkContinue, nil
+
+	})
+	data, err := json.Marshal(jira)
+	if err != nil {
+		log.Fatal(err)
+
+	}
+	fmt.Println(string(data))
+	return nil
+}
+
 //TODO: Render should be seperate from parsing
 
-// func Render(a complex object)(return string and error)
+// func Render(a complex object)(return string and error
